@@ -64,9 +64,6 @@ int main() {
         // วาดตัวละคร (เป็นสี่เหลี่ยม)
         DrawRectangleV(playerPosition, (Vector2){playerWidth, playerHeight}, BLUE);
 
-         // วาดสิ่งกีดขวาง (เป็นสี่เหลี่ยม)
-        DrawRectangleRec(obstacle, RED);
-
         // แสดงข้อความ
         DrawText("Demo", 10, 10, 20, DARKGRAY);
 
