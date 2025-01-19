@@ -15,7 +15,7 @@ float velocityY = 0.0;   // ความเร็วในแนว Y (แนว
 bool isJumping = false;   // ตรวจสอบว่าอยู่ในระหว่างกระโดดหรือไม่
 
 int main() {
-    // เริ่มต้นการใช้งาน raylib
+
     InitWindow(800, 600, "GGEZ");
 
     // ตั้งค่าการแสดงผล
