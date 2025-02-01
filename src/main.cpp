@@ -123,33 +123,33 @@ int main() {
         // Darken the entire screen, then reveal the light area around the player (rectangular FOV)
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
-                DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, Fade(BLACK, 1.0f)); // Darken the whole map
-            }
-        }
+                // Calculate distance from player to each block
+                int dx = abs(j - static_cast<int>(player.x / cellSize));
+                int dy = abs(i - static_cast<int>(player.y / cellSize));
 
-        // Draw the "shadow" around the FOV to make it dark and blend it to the edges
-        for (int i = 0; i < screenHeight; i += 2) {
-            for (int j = 0; j < screenWidth; j += 2) {
-                if (!(j >= player.x + playerWidth / 2 - fovWidth / 2 &&
-                      j <= player.x + playerWidth / 2 + fovWidth / 2 &&
-                      i >= player.y + playerHeight / 2 - fovHeight / 2 &&
-                      i <= player.y + playerHeight / 2 + fovHeight / 2)) {
-                    DrawPixel(j, i, Fade(BLACK, 0.9f)); // Dark shadow outside the FOV
+                // If within the radius of light, reveal the block
+                if (dx <= fovWidth / cellSize && dy <= fovHeight / cellSize) {
+                    float dist = sqrt(dx * dx + dy * dy);
+                    if (dist <= fovWidth / 2.0f) {
+                        // Reveal this block (wall or path) in the light area
+                        DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, RAYWHITE); // Light up the block
+                    }
                 }
             }
         }
 
-        // Draw rectangular light area around player
-        Rectangle lightArea = {player.x + playerWidth / 2 - fovWidth / 2, player.y + playerHeight / 2 - fovHeight / 2, fovWidth, fovHeight};
-        DrawRectangleRec(lightArea, Fade(RAYWHITE, 0.7f)); // Reveal this area around the player
-
-        // Draw maze in the lighted area
+        // Draw maze in the lighted area (Blue for walls)
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 if (maze[i][j] == 1) {
-                    // Check if the wall is within the light area
-                    if (CheckCollisionRecs(lightArea, {j * cellSize, i * cellSize, cellSize, cellSize})) {
-                        DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, BLUE); // Wall in blue
+                    // Only draw the wall if it's inside the illuminated area
+                    int dx = abs(j - static_cast<int>(player.x / cellSize));
+                    int dy = abs(i - static_cast<int>(player.y / cellSize));
+                    if (dx <= fovWidth / cellSize && dy <= fovHeight / cellSize) {
+                        float dist = sqrt(dx * dx + dy * dy);
+                        if (dist <= fovWidth / 2.0f) {
+                            DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, BLUE); // Wall in blue
+                        }
                     }
                 }
             }
