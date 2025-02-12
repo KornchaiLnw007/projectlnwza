@@ -50,8 +50,7 @@ int main() {
     const int cellSize = 20; // Size of each cell in pixels
     const int playerWidth = cellSize / 2; // Width of the player rectangle
     const int playerHeight = cellSize / 2; // Height of the player rectangle
-    const int fovWidth = 5 * cellSize; // Width of the rectangular FOV (field of view)
-    const int fovHeight = 5 * cellSize; // Height of the rectangular FOV
+    const float lightRadius = 3.0 * cellSize; // Radius of circular light
 
     vector<vector<int>> maze(rows, vector<int>(cols, 1));
     generateMaze(maze, rows, cols);
@@ -60,7 +59,7 @@ int main() {
     const int screenWidth = cols * cellSize;
     const int screenHeight = rows * cellSize;
 
-    InitWindow(screenWidth, screenHeight, "Maze Game with Finish Block");
+    InitWindow(screenWidth, screenHeight, "Maze Game with Circular Lighting");
     SetTargetFPS(60);
 
     // Define player attributes (rectangle)
@@ -92,20 +91,14 @@ int main() {
             if (IsKeyDown(KEY_A)) player.x -= 2.0f;
             if (IsKeyDown(KEY_D)) player.x += 2.0f;
 
-            // Collision detection with walls (check if any part of the rectangle hits the wall)
-            int cellX = static_cast<int>(player.x / cellSize);
-            int cellY = static_cast<int>(player.y / cellSize);
-
-            // Check if the player hits any part of the wall (sodium blue color)
-            if (!gameOver) {
-                for (int i = 0; i < rows; ++i) {
-                    for (int j = 0; j < cols; ++j) {
-                        if (maze[i][j] == 1) { // Check if it's a wall
-                            Rectangle wallRect = {j * cellSize, i * cellSize, cellSize, cellSize};
-                            if (CheckCollisionRecs(player, wallRect)) { // Collision with wall
-                                gameOver = true;
-                                playerColor = RED; // Change player color to red to indicate death
-                            }
+            // Collision detection with walls
+            for (int i = 0; i < rows; ++i) {
+                for (int j = 0; j < cols; ++j) {
+                    if (maze[i][j] == 1) { // Wall
+                        Rectangle wallRect = {j * cellSize, i * cellSize, cellSize, cellSize};
+                        if (CheckCollisionRecs(player, wallRect)) {
+                            gameOver = true;
+                            playerColor = RED;
                         }
                     }
                 }
@@ -118,38 +111,36 @@ int main() {
         }
 
         BeginDrawing();
-        ClearBackground(BLACK); // Fill the background with black
+        ClearBackground(BLACK);
 
-        // Darken the entire screen, then reveal the light area around the player (rectangular FOV)
+        // Circular lighting effect
+        float centerX = player.x + playerWidth / 2;
+        float centerY = player.y + playerHeight / 2;
+
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
-                // Calculate distance from player to each block
-                int dx = abs(j - static_cast<int>(player.x / cellSize));
-                int dy = abs(i - static_cast<int>(player.y / cellSize));
-
-                // If within the radius of light, reveal the block
-                if (dx <= fovWidth / cellSize && dy <= fovHeight / cellSize) {
-                    float dist = sqrt(dx * dx + dy * dy);
-                    if (dist <= fovWidth / 2.0f) {
-                        // Reveal this block (wall or path) in the light area
-                        DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, RAYWHITE); // Light up the block
-                    }
+                float blockCenterX = j * cellSize + cellSize / 2.0f;
+                float blockCenterY = i * cellSize + cellSize / 2.0f;
+                
+                float dist = sqrt((blockCenterX - centerX) * (blockCenterX - centerX) +
+                                  (blockCenterY - centerY) * (blockCenterY - centerY));
+                
+                if (dist <= lightRadius) { 
+                    DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, RAYWHITE); // Light up the block
                 }
             }
         }
 
-        // Draw maze in the lighted area (Blue for walls)
+        // Draw maze walls
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 if (maze[i][j] == 1) {
-                    // Only draw the wall if it's inside the illuminated area
-                    int dx = abs(j - static_cast<int>(player.x / cellSize));
-                    int dy = abs(i - static_cast<int>(player.y / cellSize));
-                    if (dx <= fovWidth / cellSize && dy <= fovHeight / cellSize) {
-                        float dist = sqrt(dx * dx + dy * dy);
-                        if (dist <= fovWidth / 2.0f) {
-                            DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, BLUE); // Wall in blue
-                        }
+                    float blockCenterX = j * cellSize + cellSize / 2.0f;
+                    float blockCenterY = i * cellSize + cellSize / 2.0f;
+                    float dist = sqrt((blockCenterX - centerX) * (blockCenterX - centerX) +
+                                      (blockCenterY - centerY) * (blockCenterY - centerY));
+                    if (dist <= lightRadius) {
+                        DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, BLUE);
                     }
                 }
             }
@@ -161,7 +152,7 @@ int main() {
         // Draw player as a rectangle
         DrawRectangleRec(player, playerColor);
 
-        // Draw instructions and game state
+        // Draw game state text
         if (gameOver) {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 20, RED);
         } else if (gameWin) {
