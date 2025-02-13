@@ -3,6 +3,7 @@
 #include <stack>
 #include <algorithm>
 #include <random>
+#include "player.h"
 
 using namespace std;
 
@@ -44,12 +45,11 @@ void generateMaze(vector<vector<int>>& maze, int rows, int cols) {
     }
 }
 
+
 int main() {
     const int rows = 41;  // Must be odd for proper maze generation
     const int cols = 41;  // Must be odd
     const int cellSize = 20; // Size of each cell in pixels
-    const int playerWidth = cellSize / 2; // Width of the player rectangle
-    const int playerHeight = cellSize / 2; // Height of the player rectangle
     const float lightRadius = 3.0 * cellSize; // Radius of circular light
 
     vector<vector<int>> maze(rows, vector<int>(cols, 1));
@@ -62,9 +62,8 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Maze Game with Circular Lighting");
     SetTargetFPS(60);
 
-    // Define player attributes (rectangle)
-    Rectangle player = {cellSize + cellSize / 4.0f, cellSize + cellSize / 4.0f, playerWidth, playerHeight}; // Starting position
-    Color playerColor = GREEN;
+    // Create player instance
+    Player player(cellSize + cellSize / 4.0f, cellSize + cellSize / 4.0f, cellSize / 2.0f, cellSize / 2.0f, GREEN, 2.0f);
 
     // Finish block position (top-right corner of the maze)
     Rectangle finish = {(cols - 2) * cellSize + cellSize / 4.0f, (rows - 2) * cellSize + cellSize / 4.0f, cellSize / 2.0f, cellSize / 2.0f};
@@ -77,35 +76,25 @@ int main() {
         // Restart the game on 'R'
         if (IsKeyPressed(KEY_R)) {
             generateMaze(maze, rows, cols);
-            player.x = cellSize + cellSize / 4.0f;
-            player.y = cellSize + cellSize / 4.0f;
+            player.rect.x = cellSize + cellSize / 4.0f;
+            player.rect.y = cellSize + cellSize / 4.0f;
             gameOver = false;
             gameWin = false;
-            playerColor = GREEN;  // Reset player color to green
+            player.color = GREEN;  // Reset player color to green
         }
 
         if (!gameOver && !gameWin) {
             // Player movement
-            if (IsKeyDown(KEY_W)) player.y -= 2.0f;
-            if (IsKeyDown(KEY_S)) player.y += 2.0f;
-            if (IsKeyDown(KEY_A)) player.x -= 2.0f;
-            if (IsKeyDown(KEY_D)) player.x += 2.0f;
+            player.Move();
 
             // Collision detection with walls
-            for (int i = 0; i < rows; ++i) {
-                for (int j = 0; j < cols; ++j) {
-                    if (maze[i][j] == 1) { // Wall
-                        Rectangle wallRect = {j * cellSize, i * cellSize, cellSize, cellSize};
-                        if (CheckCollisionRecs(player, wallRect)) {
-                            gameOver = true;
-                            playerColor = RED;
-                        }
-                    }
-                }
+            if (player.CheckCollisionWithWalls(maze, rows, cols, cellSize)) {
+                gameOver = true;
+                player.color = RED;
             }
 
             // Check if the player reached the finish block
-            if (CheckCollisionRecs(player, finish)) {
+            if (CheckCollisionRecs(player.rect, finish)) {
                 gameWin = true;
             }
         }
@@ -114,8 +103,8 @@ int main() {
         ClearBackground(BLACK);
 
         // Circular lighting effect
-        float centerX = player.x + playerWidth / 2;
-        float centerY = player.y + playerHeight / 2;
+        float centerX = player.rect.x + player.rect.width / 2;
+        float centerY = player.rect.y + player.rect.height / 2;
 
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
@@ -149,8 +138,8 @@ int main() {
         // Draw finish block
         DrawRectangleRec(finish, finishColor);
 
-        // Draw player as a rectangle
-        DrawRectangleRec(player, playerColor);
+        // Draw player
+        player.Draw();
 
         // Draw game state text
         if (gameOver) {
