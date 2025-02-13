@@ -34,4 +34,4 @@ class Player {
         void Draw() {
             DrawRectangleRec(rect, color);
         }
-    };
+};

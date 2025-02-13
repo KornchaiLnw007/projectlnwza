@@ -1,50 +1,11 @@
 #include <raylib.h>
 #include <vector>
-#include <stack>
 #include <algorithm>
-#include <random>
+#include <cmath>
 #include "player.h"
+#include "maze.h" 
 
 using namespace std;
-
-// Define directions: right, down, left, up
-const int directions[4][2] = {{0, 1}, {1, 0}, {0, -1}, {-1, 0}};
-
-// Maze generation using DFS
-void generateMaze(vector<vector<int>>& maze, int rows, int cols) {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            maze[i][j] = 1; // 1 represents a wall
-        }
-    }
-
-    stack<pair<int, int>> st;
-    st.push({1, 1});
-    maze[1][1] = 0; // 0 represents a path
-
-    random_device rd;
-    mt19937 rng(rd());
-
-    while (!st.empty()) {
-        pair<int, int> current = st.top();
-        st.pop();
-
-        vector<int> dirs = {0, 1, 2, 3};
-        shuffle(dirs.begin(), dirs.end(), rng);
-
-        for (int dir : dirs) {
-            int ni = current.first + directions[dir][0] * 2;
-            int nj = current.second + directions[dir][1] * 2;
-
-            if (ni >= 1 && ni < rows && nj >= 1 && nj < cols && maze[ni][nj] == 1) {
-                maze[ni][nj] = 0;
-                maze[current.first + directions[dir][0]][current.second + directions[dir][1]] = 0;
-                st.push({ni, nj});
-            }
-        }
-    }
-}
-
 
 int main() {
     const int rows = 41;  // Must be odd for proper maze generation
@@ -52,10 +13,10 @@ int main() {
     const int cellSize = 20; // Size of each cell in pixels
     const float lightRadius = 3.0 * cellSize; // Radius of circular light
 
-    vector<vector<int>> maze(rows, vector<int>(cols, 1));
-    generateMaze(maze, rows, cols);
+    // Create Maze object
+    Maze maze(rows, cols);
 
-    // Initialize raylib
+    // Initialize raylib window
     const int screenWidth = cols * cellSize;
     const int screenHeight = rows * cellSize;
 
@@ -75,7 +36,7 @@ int main() {
     while (!WindowShouldClose()) {
         // Restart the game on 'R'
         if (IsKeyPressed(KEY_R)) {
-            generateMaze(maze, rows, cols);
+            maze = Maze(rows, cols);  // Recreate maze object
             player.rect.x = cellSize + cellSize / 4.0f;
             player.rect.y = cellSize + cellSize / 4.0f;
             gameOver = false;
@@ -88,7 +49,7 @@ int main() {
             player.Move();
 
             // Collision detection with walls
-            if (player.CheckCollisionWithWalls(maze, rows, cols, cellSize)) {
+            if (player.CheckCollisionWithWalls(maze.maze, rows, cols, cellSize)) {
                 gameOver = true;
                 player.color = RED;
             }
@@ -123,7 +84,7 @@ int main() {
         // Draw maze walls
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
-                if (maze[i][j] == 1) {
+                if (maze.isWall(i, j)) {
                     float blockCenterX = j * cellSize + cellSize / 2.0f;
                     float blockCenterY = i * cellSize + cellSize / 2.0f;
                     float dist = sqrt((blockCenterX - centerX) * (blockCenterX - centerX) +
