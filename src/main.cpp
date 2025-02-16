@@ -29,11 +29,35 @@ int main() {
 
     bool gameOver = false;
     bool gameWin = false;
+    bool gameStarted = false;  // ตัวแปรเพื่อตรวจสอบว่าเกมเริ่มแล้วหรือยัง
 
     Timer gameTimer;
     gameTimer.Reset();
 
     while (!WindowShouldClose()) {
+        if (!gameStarted) {
+            // แสดงหน้าจอหลัก
+            BeginDrawing();
+            ClearBackground(GRAY);
+            DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
+            DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
+            EndDrawing();
+
+            // ถ้ากด Spacebar, เกมเริ่ม
+            if (IsKeyPressed(KEY_SPACE)) {
+                gameStarted = true;
+            }
+            continue; // ข้ามขั้นตอนอื่นๆ ที่จะไปที่หน้าจอเกม
+        }
+
+        // ถ้ากด M จะกลับไปที่หน้าจอหลัก
+        if (IsKeyPressed(KEY_M)) {
+            gameStarted = false;  // เปลี่ยนสถานะกลับไปที่หน้าจอหลัก
+            gameOver = false;
+            gameWin = false;
+            gameTimer.Reset();
+        }
+
         if (IsKeyPressed(KEY_R)) {
             maze = Maze(rows, cols);
             player.rect.x = cellSize + cellSize / 4.0f;
@@ -72,10 +96,8 @@ int main() {
                 float blockCenterX = j * cellSize + cellSize / 2.0f;
                 float blockCenterY = i * cellSize + cellSize / 2.0f;
                 
-                float dist = sqrt((blockCenterX - centerX) * (blockCenterX - centerX) +
-                                (blockCenterY - centerY) * (blockCenterY - centerY));
-                
-                if (dist <= lightRadius) { 
+                float distSquared = (blockCenterX - centerX) * (blockCenterX - centerX) + (blockCenterY - centerY) * (blockCenterY - centerY);
+                if (distSquared <= lightRadius * lightRadius) {
                     DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, RAYWHITE);
                 }
             }
@@ -86,9 +108,8 @@ int main() {
                 if (maze.isWall(i, j)) {
                     float blockCenterX = j * cellSize + cellSize / 2.0f;
                     float blockCenterY = i * cellSize + cellSize / 2.0f;
-                    float dist = sqrt((blockCenterX - centerX) * (blockCenterX - centerX) +
-                                    (blockCenterY - centerY) * (blockCenterY - centerY));
-                    if (dist <= lightRadius) {
+                    float distSquared = (blockCenterX - centerX) * (blockCenterX - centerX) + (blockCenterY - centerY) * (blockCenterY - centerY);
+                    if (distSquared <= lightRadius * lightRadius) {
                         DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, BLUE);
                     }
                 }
