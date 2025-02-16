@@ -27,6 +27,6 @@ public:
 
     void Draw(int x, int y) {
         string timeText = TextFormat("Time: %.2f seconds", time);
-        DrawText(timeText.c_str(), x, y, 20, WHITE);
+        DrawText(timeText.c_str(), x, y, 30, WHITE);
     }
 };

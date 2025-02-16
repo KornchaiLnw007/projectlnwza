@@ -11,10 +11,10 @@ class Player {
             : rect({startX, startY, width, height}), color(startColor), speed(startSpeed) {}
     
         void Move() {
-            if (IsKeyDown(KEY_W)) rect.y -= speed;
-            if (IsKeyDown(KEY_S)) rect.y += speed;
-            if (IsKeyDown(KEY_A)) rect.x -= speed;
-            if (IsKeyDown(KEY_D)) rect.x += speed;
+            if (IsKeyDown(KEY_W)) rect.y -= 1.5*speed;
+            if (IsKeyDown(KEY_S)) rect.y += 1.5*speed;
+            if (IsKeyDown(KEY_A)) rect.x -= 1.5*speed;
+            if (IsKeyDown(KEY_D)) rect.x += 1.5*speed;
         }
     
         bool CheckCollisionWithWalls(const vector<vector<int>>& maze, int rows, int cols, int cellSize) {
