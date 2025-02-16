@@ -5,7 +5,8 @@
 #include "player.h"
 #include "maze.h" 
 #include "timer.h" 
-#include "menu.h" 
+#include "menu.h"
+#include "tutorial.h" 
 
 using namespace std;
 
@@ -31,25 +32,47 @@ int main() {
     bool gameOver = false;
     bool gameWin = false;
     bool gameStarted = false;
+    bool inTutorial = false;  // New flag for tutorial mode
 
     Timer gameTimer;
     gameTimer.Reset();
     MainMenu mainMenu(screenWidth, screenHeight);
+    Tutorial tutorialScreen;  // Assuming you have a tutorial class
 
     while (!WindowShouldClose()) {
-        if (!gameStarted) {
+        if (!gameStarted && !inTutorial) {
+            // Main menu
             BeginDrawing();
             ClearBackground(GRAY);
             DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
             DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
+            DrawText("Press 'T' for tutorial", screenWidth / 2 - 100, screenHeight / 2 + 40, 20, DARKGRAY); // Tutorial option
             EndDrawing();
 
             if (IsKeyPressed(KEY_SPACE)) {
                 gameStarted = true;
             }
+            if (IsKeyPressed(KEY_T)) {
+                inTutorial = true;  // Go to tutorial when T is pressed
+                gameStarted = false;  // Don't start the game
+            }
             continue;
         }
 
+        if (inTutorial) {
+            // Display tutorial screen
+            tutorialScreen.Draw(screenWidth, screenHeight);
+            if (tutorialScreen.GoToMainMenu()) {
+                inTutorial = false;  // Back to main menu
+                gameStarted = false;
+                gameOver = false;
+                gameWin = false;
+                gameTimer.Reset();
+            }
+            continue; // Skip the rest of the game logic
+        }
+
+        // If the game is running
         if (IsKeyPressed(KEY_M)) {
             gameStarted = false;
             gameOver = false;
@@ -89,11 +112,11 @@ int main() {
         float centerX = player.rect.x + player.rect.width / 2;
         float centerY = player.rect.y + player.rect.height / 2;
 
+        // Draw lighting effect
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 float blockCenterX = j * cellSize + cellSize / 2.0f;
                 float blockCenterY = i * cellSize + cellSize / 2.0f;
-                
                 float distSquared = (blockCenterX - centerX) * (blockCenterX - centerX) + (blockCenterY - centerY) * (blockCenterY - centerY);
                 if (distSquared <= lightRadius * lightRadius) {
                     DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, RAYWHITE);
@@ -101,6 +124,7 @@ int main() {
             }
         }
 
+        // Draw walls
         for (int i = 0; i < rows; ++i) {
             for (int j = 0; j < cols; ++j) {
                 if (maze.isWall(i, j)) {
@@ -114,11 +138,13 @@ int main() {
             }
         }
 
+        // Draw finish block
         DrawRectangleRec(finish, finishColor);
         player.Draw();
         gameTimer.Draw(1575, 10);
         DrawText("Press 'M' to main menu", 10, 965, 30, GREEN);
 
+        // Game over or win messages
         if (gameOver) {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
         } else if (gameWin) {
