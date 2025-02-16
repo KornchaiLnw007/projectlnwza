@@ -11,9 +11,9 @@ using namespace std;
 
 int main() {
     const int cols = 47; 
-    const int rows = 27;  
+    const int rows = 25;  
     const int cellSize = 40;
-    const float lightRadius = 3.0 * cellSize;  
+    const float lightRadius = 100.0 * cellSize;  
 
     Maze maze(rows, cols);
 
@@ -117,7 +117,7 @@ int main() {
         DrawRectangleRec(finish, finishColor);
         player.Draw();
         gameTimer.Draw(1575, 10);
-        DrawText("Press 'M' to main menu", 10, 1000, 30, GREEN);
+        DrawText("Press 'M' to main menu", 10, 965, 30, GREEN);
 
         if (gameOver) {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
