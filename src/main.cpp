@@ -116,8 +116,8 @@ int main() {
 
         DrawRectangleRec(finish, finishColor);
         player.Draw();
-        gameTimer.Draw(1590, 10);
-        DrawText("Press 'M' to main menu", 10, 1050, 30, GREEN);
+        gameTimer.Draw(1575, 10);
+        DrawText("Press 'M' to main menu", 10, 1000, 30, GREEN);
 
         if (gameOver) {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
