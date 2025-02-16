@@ -4,7 +4,8 @@
 #include <cmath>
 #include "player.h"
 #include "maze.h" 
-#include "timer.h"  
+#include "timer.h" 
+#include "menu.h" 
 
 using namespace std;
 
@@ -33,6 +34,7 @@ int main() {
 
     Timer gameTimer;
     gameTimer.Reset();
+    MainMenu mainMenu(screenWidth, screenHeight);
 
     while (!WindowShouldClose()) {
         if (!gameStarted) {
@@ -122,6 +124,8 @@ int main() {
 
         gameTimer.Draw(610, 10);
 
+        DrawText("Press 'M' to main menu", 10, 795, 20, GREEN);
+
         if (gameOver) {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 20, RED);
         } else if (gameWin) {
@@ -130,7 +134,6 @@ int main() {
         } else {
             DrawText("Use W/A/S/D to move. Reach the GOLD block!", 10, 10, 20, GREEN);
             DrawText("Press 'R' to regenerate maze", 10, 40, 20, GREEN);
-            DrawText("Press 'M' to main menu", 10, 795, 20, GREEN);
         }
 
         EndDrawing();
