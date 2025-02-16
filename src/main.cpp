@@ -9,10 +9,10 @@
 using namespace std;
 
 int main() {
-    const int rows = 41;
+    const int rows = 41; 
     const int cols = 41;
     const int cellSize = 20;
-    const float lightRadius = 3.0 * cellSize;
+    const float lightRadius = 4.0 * cellSize;
 
     Maze maze(rows, cols);
 
@@ -130,6 +130,7 @@ int main() {
         } else {
             DrawText("Use W/A/S/D to move. Reach the GOLD block!", 10, 10, 20, GREEN);
             DrawText("Press 'R' to regenerate maze", 10, 40, 20, GREEN);
+            DrawText("Press 'M' to main menu", 10, 795, 20, GREEN);
         }
 
         EndDrawing();
