@@ -14,7 +14,7 @@ int main() {
     const int cols = 47; 
     const int rows = 25;  
     const int cellSize = 40;
-    const float lightRadius = 100.0 * cellSize;  
+    const float lightRadius = 3.0 * cellSize;  
 
     Maze maze(rows, cols);
 
@@ -150,9 +150,6 @@ int main() {
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
             DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1650, 10 , 30, GREEN);
-        } else {
-            DrawText("Use W/A/S/D to move. Reach the GOLD block!", 10, 10, 30, GREEN);
-            DrawText("Press 'R' to regenerate maze", 10, 50, 30, GREEN);
         }
 
         EndDrawing();
