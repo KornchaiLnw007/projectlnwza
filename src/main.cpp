@@ -3,33 +3,21 @@
 #include <algorithm>
 #include <cmath>
 #include "player.h"
-#include "maze.h" 
-#include "timer.h" 
+#include "maze.h"
+#include "timer.h"
 #include "menu.h"
 #include "tutorial.h"
-#include "time.h"  // รวมฟังก์ชัน SaveTimeToFile และ LoadBestTime
+#include "time.h"  
 
 using namespace std;
 
-void GameOver(float time) {
-    // โหลดเวลาที่ดีที่สุดจากไฟล์
-    float bestTime = LoadBestTime();
-
-    // ถ้าเวลาของผู้เล่นดีกว่าเวลาที่บันทึกไว้ในไฟล์
-    if (bestTime == -1 || time < bestTime) {
-        // บันทึกเวลาที่เร็วที่สุดลงในไฟล์
-        SaveTimeToFile(time);
-    }
-}
-
 int main() {
-    const int cols = 47; 
-    const int rows = 25;  
+    const int cols = 47;
+    const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 100.0 * cellSize;  
+    const float lightRadius = 3.0 * cellSize;
 
     Maze maze(rows, cols);
-
     const int screenWidth = cols * cellSize;
     const int screenHeight = rows * cellSize;
 
@@ -37,19 +25,18 @@ int main() {
     SetTargetFPS(60);
 
     Player player(cellSize + cellSize / 4.0f, cellSize + cellSize / 4.0f, cellSize / 2.0f, cellSize / 2.0f, GREEN, 2.0f);
-    
     Rectangle finish = {(cols - 2) * cellSize + cellSize / 4.0f, (rows - 2) * cellSize + cellSize / 4.0f, cellSize / 2.0f, cellSize / 2.0f};
     Color finishColor = GOLD;
 
     bool gameOver = false;
     bool gameWin = false;
     bool gameStarted = false;
-    bool inTutorial = false;  // New flag for tutorial mode
+    bool inTutorial = false;
 
     Timer gameTimer;
     gameTimer.Reset();
     MainMenu mainMenu(screenWidth, screenHeight);
-    Tutorial tutorialScreen;  // Assuming you have a tutorial class
+    Tutorial tutorialScreen;
 
     while (!WindowShouldClose()) {
         if (!gameStarted && !inTutorial) {
@@ -58,12 +45,12 @@ int main() {
             ClearBackground(GRAY);
             DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
             DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
-            DrawText("Press 'T' for tutorial", screenWidth / 2 - 100, screenHeight / 2 + 40, 20, DARKGRAY); // Tutorial option
+            DrawText("Press 'T' for tutorial", screenWidth / 2 - 100, screenHeight / 2 + 40, 20, DARKGRAY);
 
-            // Display best time from file
+            // Display the best time from the file
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
-                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 100, screenHeight / 2 + 70, 20, DARKGREEN);
+                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 150, screenHeight / 2 + 70, 20, DARKGRAY);
             }
 
             EndDrawing();
@@ -72,8 +59,8 @@ int main() {
                 gameStarted = true;
             }
             if (IsKeyPressed(KEY_T)) {
-                inTutorial = true;  // Go to tutorial when T is pressed
-                gameStarted = false;  // Don't start the game
+                inTutorial = true;
+                gameStarted = false;
             }
             continue;
         }
@@ -88,11 +75,13 @@ int main() {
                 gameWin = false;
                 gameTimer.Reset();
             }
-            continue; // Skip the rest of the game logic
+            continue;
         }
 
-        // If the game is running
         if (IsKeyPressed(KEY_M)) {
+            maze = Maze(rows, cols);
+            player.rect.x = cellSize + cellSize / 4.0f;
+            player.rect.y = cellSize + cellSize / 4.0f;
             gameStarted = false;
             gameOver = false;
             gameWin = false;
@@ -170,8 +159,8 @@ int main() {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
             DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1650, 10 , 30, GREEN);
 
-            // Call GameOver to check if the player achieved a new best time
-            GameOver(gameTimer.time);
+            // Save time after player wins
+            SaveTimeToFile(gameTimer.time);
         }
 
         EndDrawing();
