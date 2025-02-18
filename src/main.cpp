@@ -6,15 +6,27 @@
 #include "maze.h" 
 #include "timer.h" 
 #include "menu.h"
-#include "tutorial.h" 
+#include "tutorial.h"
+#include "time.h"  // รวมฟังก์ชัน SaveTimeToFile และ LoadBestTime
 
 using namespace std;
+
+void GameOver(float time) {
+    // โหลดเวลาที่ดีที่สุดจากไฟล์
+    float bestTime = LoadBestTime();
+
+    // ถ้าเวลาของผู้เล่นดีกว่าเวลาที่บันทึกไว้ในไฟล์
+    if (bestTime == -1 || time < bestTime) {
+        // บันทึกเวลาที่เร็วที่สุดลงในไฟล์
+        SaveTimeToFile(time);
+    }
+}
 
 int main() {
     const int cols = 47; 
     const int rows = 25;  
     const int cellSize = 40;
-    const float lightRadius = 3.0 * cellSize;  
+    const float lightRadius = 100.0 * cellSize;  
 
     Maze maze(rows, cols);
 
@@ -47,6 +59,13 @@ int main() {
             DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
             DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
             DrawText("Press 'T' for tutorial", screenWidth / 2 - 100, screenHeight / 2 + 40, 20, DARKGRAY); // Tutorial option
+
+            // Display best time from file
+            float bestTime = LoadBestTime();
+            if (bestTime != -1) {
+                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 100, screenHeight / 2 + 70, 20, DARKGREEN);
+            }
+
             EndDrawing();
 
             if (IsKeyPressed(KEY_SPACE)) {
@@ -150,6 +169,9 @@ int main() {
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
             DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1650, 10 , 30, GREEN);
+
+            // Call GameOver to check if the player achieved a new best time
+            GameOver(gameTimer.time);
         }
 
         EndDrawing();

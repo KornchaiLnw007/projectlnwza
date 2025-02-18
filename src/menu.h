@@ -1,19 +1,21 @@
 #include <raylib.h>
+#include <string>
+#include "time.h"  // เพิ่มการใช้งาน time.h
 
 class MainMenu {
     public:
-    MainMenu(int screenWidth, int screenHeight);
-    void Update(bool& gameStarted);
-    void Draw();
+        MainMenu(int screenWidth, int screenHeight);
+        void Update(bool& gameStarted);
+        void Draw();
 
     private:
-    int screenWidth;
-    int screenHeight;
+        int screenWidth;
+        int screenHeight;
+        float bestTime;
 };
 
-MainMenu::MainMenu(int screenWidth, int screenHeight) {
-    this->screenWidth = screenWidth;
-    this->screenHeight = screenHeight;
+MainMenu::MainMenu(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight) {
+    bestTime = LoadBestTime();  // โหลดเวลาที่ดีที่สุดจากไฟล์เมื่อเมนูเริ่ม
 }
 
 void MainMenu::Update(bool& gameStarted) {
@@ -24,10 +26,19 @@ void MainMenu::Update(bool& gameStarted) {
 }
 
 void MainMenu::Draw() {
-    // Draw the main menu screen
     BeginDrawing();
     ClearBackground(GRAY);
+
+    // แสดงชื่อเกม
     DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
     DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
+
+    // แสดงเวลาเร็วที่สุด
+    if (bestTime >= 0) {
+        DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 100, screenHeight / 2 + 50, 20, GREEN);
+    } else {
+        DrawText("No best time recorded", screenWidth / 2 - 100, screenHeight / 2 + 50, 20, RED);
+    }
+
     EndDrawing();
 }
