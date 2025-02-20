@@ -32,7 +32,7 @@ int main() {
     bool gameOver = false;
     bool gameWin = false;
     bool gameStarted = false;
-    bool inTutorial = false;  // New flag for tutorial mode
+    bool inTutorial = false;  // New flag for tutorial mode 
 
     Timer gameTimer;
     gameTimer.Reset();
@@ -40,13 +40,29 @@ int main() {
     Tutorial tutorialScreen;  // Assuming you have a tutorial class
 
     while (!WindowShouldClose()) {
+         Image menuImage = LoadImage("src/Graphic/Nar.png"); 
+                
         if (!gameStarted && !inTutorial) {
+           
+            
             // Main menu
             BeginDrawing();
-            ClearBackground(GRAY);
-            DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
-            DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
-            DrawText("Press 'T' for tutorial", screenWidth / 2 - 100, screenHeight / 2 + 40, 20, DARKGRAY); // Tutorial option
+    
+            ImageResize(&menuImage, 953*1.5, 648*1.5);
+            Texture2D MenuImage = LoadTextureFromImage(menuImage);  // Load the image
+            UnloadImage(menuImage);
+            ClearBackground(WHITE); 
+           
+            DrawTexture(MenuImage, 240, 10, WHITE);
+            DrawText("MAZE of", screenWidth / 2 + 295, screenHeight / 2 - 360, 60, BLACK);
+            DrawText("LEGENDS", screenWidth / 2 + 365, screenHeight / 2 - 280, 60, BLACK);
+            DrawText("MAZE of", screenWidth / 2 + 280, screenHeight / 2 - 370, 60, GOLD);
+            DrawText("LEGENDS", screenWidth / 2 + 350, screenHeight / 2 - 290, 60, GOLD);
+            DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 305, screenHeight / 2 + 105, 30, BLACK);
+            DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 305, screenHeight / 2 +255, 30, BLACK);
+            DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 295, screenHeight / 2 + 100, 30, LIME);
+            DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 295, screenHeight / 2 +250, 30, LIME);
+             // Tutorial option
             EndDrawing();
 
             if (IsKeyPressed(KEY_SPACE)) {
@@ -58,6 +74,7 @@ int main() {
             }
             continue;
         }
+        
 
         if (inTutorial) {
             // Display tutorial screen
@@ -74,6 +91,9 @@ int main() {
 
         // If the game is running
         if (IsKeyPressed(KEY_M)) {
+            maze = Maze(rows, cols);
+            player.rect.x = cellSize + cellSize / 4.0f;
+            player.rect.y = cellSize + cellSize / 4.0f;
             gameStarted = false;
             gameOver = false;
             gameWin = false;
@@ -119,7 +139,7 @@ int main() {
                 float blockCenterY = i * cellSize + cellSize / 2.0f;
                 float distSquared = (blockCenterX - centerX) * (blockCenterX - centerX) + (blockCenterY - centerY) * (blockCenterY - centerY);
                 if (distSquared <= lightRadius * lightRadius) {
-                    DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, RAYWHITE);
+                    DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, DARKBROWN);
                 }
             }
         }
@@ -132,11 +152,11 @@ int main() {
                     float blockCenterY = i * cellSize + cellSize / 2.0f;
                     float distSquared = (blockCenterX - centerX) * (blockCenterX - centerX) + (blockCenterY - centerY) * (blockCenterY - centerY);
                     if (distSquared <= lightRadius * lightRadius) {
-                        DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, BLUE);
+                        DrawRectangle(j * cellSize, i * cellSize, cellSize, cellSize, DARKGRAY);
                     }
                 }
             }
-        }
+        }   
 
         // Draw finish block
         DrawRectangleRec(finish, finishColor);
@@ -149,7 +169,7 @@ int main() {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
-            DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1650, 10 , 30, GREEN);
+            DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 1570, 40 , 30, GREEN);
         }
 
         EndDrawing();

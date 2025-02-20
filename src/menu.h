@@ -1,14 +1,14 @@
 #include <raylib.h>
 
 class MainMenu {
+     private:
+    int screenWidth;
+    int screenHeight;
+    
     public:
     MainMenu(int screenWidth, int screenHeight);
     void Update(bool& gameStarted);
     void Draw();
-
-    private:
-    int screenWidth;
-    int screenHeight;
 };
 
 MainMenu::MainMenu(int screenWidth, int screenHeight) {
