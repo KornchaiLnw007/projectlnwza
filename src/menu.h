@@ -6,22 +6,11 @@ class MainMenu {
      private:
     int screenWidth;
     int screenHeight;
-    
+    float bestTime;
     public:
-<<<<<<< HEAD
-    MainMenu(int screenWidth, int screenHeight);
-    void Update(bool& gameStarted);
-    void Draw();
-=======
         MainMenu(int screenWidth, int screenHeight);
         void Update(bool& gameStarted);
         void Draw();
-
-    private:
-        int screenWidth;
-        int screenHeight;
-        float bestTime;
->>>>>>> c04810484831f678b356c2e8b205ce10b363cfd5
 };
 
 MainMenu::MainMenu(int screenWidth, int screenHeight) : screenWidth(screenWidth), screenHeight(screenHeight) {

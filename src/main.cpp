@@ -15,7 +15,7 @@ int main() {
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 100.0 * cellSize;
+    const float lightRadius = 3.0 * cellSize;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
@@ -31,32 +31,23 @@ int main() {
     bool gameOver = false;
     bool gameWin = false;
     bool gameStarted = false;
-<<<<<<< HEAD
     bool inTutorial = false;  // New flag for tutorial mode 
-=======
-    bool inTutorial = false;
->>>>>>> c04810484831f678b356c2e8b205ce10b363cfd5
+
+
 
     Timer gameTimer;
     gameTimer.Reset();
     MainMenu mainMenu(screenWidth, screenHeight);
     Tutorial tutorialScreen;
-
     while (!WindowShouldClose()) {
-         Image menuImage = LoadImage("src/Graphic/Nar.png"); 
-                
         if (!gameStarted && !inTutorial) {
-           
-            
             // Main menu
+            Image menuImage = LoadImage("src/Graphic/Nar.png");
             BeginDrawing();
-<<<<<<< HEAD
-    
             ImageResize(&menuImage, 953*1.5, 648*1.5);
             Texture2D MenuImage = LoadTextureFromImage(menuImage);  // Load the image
             UnloadImage(menuImage);
             ClearBackground(WHITE); 
-           
             DrawTexture(MenuImage, 240, 10, WHITE);
             DrawText("MAZE of", screenWidth / 2 + 295, screenHeight / 2 - 360, 60, BLACK);
             DrawText("LEGENDS", screenWidth / 2 + 365, screenHeight / 2 - 280, 60, BLACK);
@@ -66,20 +57,11 @@ int main() {
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 305, screenHeight / 2 +255, 30, BLACK);
             DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 295, screenHeight / 2 + 100, 30, LIME);
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 295, screenHeight / 2 +250, 30, LIME);
-             // Tutorial option
-=======
-            ClearBackground(GRAY);
-            DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
-            DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
-            DrawText("Press 'T' for tutorial", screenWidth / 2 - 100, screenHeight / 2 + 40, 20, DARKGRAY);
-
             // Display the best time from the file
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
                 DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 150, screenHeight / 2 + 70, 20, DARKGRAY);
             }
-
->>>>>>> c04810484831f678b356c2e8b205ce10b363cfd5
             EndDrawing();
 
             if (IsKeyPressed(KEY_SPACE)) {
@@ -185,14 +167,10 @@ int main() {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
-<<<<<<< HEAD
             DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 1570, 40 , 30, GREEN);
-=======
             DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1650, 10 , 30, GREEN);
-
             // Save time after player wins
             SaveTimeToFile(gameTimer.time);
->>>>>>> c04810484831f678b356c2e8b205ce10b363cfd5
         }
 
         EndDrawing();
