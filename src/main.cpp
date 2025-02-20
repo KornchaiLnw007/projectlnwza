@@ -15,7 +15,7 @@ int main() {
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 3.0 * cellSize;
+    const float lightRadius = 100.0 * cellSize;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
