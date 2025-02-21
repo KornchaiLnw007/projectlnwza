@@ -24,20 +24,3 @@ void MainMenu::Update(bool& gameStarted) {
     }
 }
 
-void MainMenu::Draw() {
-    BeginDrawing();
-    ClearBackground(GRAY);
-
-    // แสดงชื่อเกม
-    DrawText("Maze Game", screenWidth / 2 - 100, screenHeight / 2 - 40, 40, GOLD);
-    DrawText("Press SPACE to start", screenWidth / 2 - 100, screenHeight / 2 + 10, 20, DARKGRAY);
-
-    // แสดงเวลาเร็วที่สุด
-    if (bestTime >= 0) {
-        DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 100, screenHeight / 2 + 50, 20, GREEN);
-    } else {
-        DrawText("No best time recorded", screenWidth / 2 - 100, screenHeight / 2 + 50, 20, RED);
-    }
-
-    EndDrawing();
-}

@@ -9,7 +9,6 @@ public:
     vector<vector<int>> maze;
     int rows;
     int cols;
-
     Maze(int rows, int cols);
     void generateMaze();
     bool isWall(int i, int j);

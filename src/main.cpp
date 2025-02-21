@@ -60,7 +60,10 @@ int main() {
             // Display the best time from the file
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
-                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 - 150, screenHeight / 2 + 70, 20, DARKGRAY);
+                Color myColor = (Color){255, 100, 100, 255};
+                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 + 295, screenHeight / 2 - 170, 30, BLACK);
+                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 + 285, screenHeight / 2 - 175, 30, myColor);
+                
             }
             EndDrawing();
 
@@ -168,7 +171,7 @@ int main() {
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
             DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 1570, 40 , 30, GREEN);
-            DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1650, 10 , 30, GREEN);
+            DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1575, 40 , 30, GREEN);
             // Save time after player wins
             SaveTimeToFile(gameTimer.time);
         }
