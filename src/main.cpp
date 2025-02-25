@@ -15,7 +15,7 @@ int main() {
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 3.0 * cellSize;
+    const float lightRadius = 100.0 * cellSize;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
@@ -170,13 +170,25 @@ int main() {
             DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
-            DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 1570, 40 , 30, GREEN);
-            DrawText(TextFormat("Time: %.2f seconds", gameTimer.time), 1575, 40 , 30, GREEN);
-            // Save time after player wins
+            DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 1545, 40 , 30, GREEN);
             SaveTimeToFile(gameTimer.time);
-        }
+            string grade;
+            if (gameTimer.time < 30) {
+                grade = "Excellent!";
+            } else if (gameTimer.time < 60) {
+                grade = "Good job!";
+            } else if (gameTimer.time < 90) {
+                grade = "Not bad!";
+            } else if (gameTimer.time < 120) {
+                grade = "Try harder!";
+            } else {
+                grade = "KAK!!!";
+            }
+            int textWidth = MeasureText(grade.c_str(), 100);
+            DrawText(grade.c_str(), (screenWidth - textWidth) / 2, screenHeight / 2 - 50, 100, GREEN);
 
-        EndDrawing();
+            EndDrawing();
+        }
     }
 
     CloseWindow();
