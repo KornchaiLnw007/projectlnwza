@@ -12,7 +12,7 @@
 using namespace std;
 
 int main() {
-    InitAudioDevice(); 
+    InitAudioDevice();
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
@@ -34,20 +34,23 @@ int main() {
     bool gameStarted = false;
     bool inTutorial = false;  // New flag for tutorial mode 
 
-
+    Music mainMusic = LoadMusicStream("src/sound/mainsong.mp3");
+    Music gameMusic = LoadMusicStream("src/sound/gamesong.mp3");
+    PlayMusicStream(mainMusic);
 
     Timer gameTimer;
     gameTimer.Reset();
     MainMenu mainMenu(screenWidth, screenHeight);
     Tutorial tutorialScreen;
+    Image menuImage = LoadImage("src/Graphic/Nar.png");
+    ImageResize(&menuImage, 953*1.5, 648*1.5);
+    Texture2D MenuImage = LoadTextureFromImage(menuImage);
+    UnloadImage(menuImage); // ไม่ต้องใช้ Image แล้ว
     while (!WindowShouldClose()) {
+        UpdateMusicStream(mainMusic); // อัปเดตเพลงเมนู
+        UpdateMusicStream(gameMusic); // อัปเดตเพลงเกม
         if (!gameStarted && !inTutorial) {
-            // Main menu
-            Image menuImage = LoadImage("src/Graphic/Nar.png");
             BeginDrawing();
-            ImageResize(&menuImage, 953*1.5, 648*1.5);
-            Texture2D MenuImage = LoadTextureFromImage(menuImage);  // Load the image
-            UnloadImage(menuImage);
             ClearBackground(WHITE); 
             DrawTexture(MenuImage, 240, 10, WHITE);
             DrawText("MAZE of", screenWidth / 2 + 295, screenHeight / 2 - 360, 60, BLACK);
@@ -58,7 +61,6 @@ int main() {
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 305, screenHeight / 2 +255, 30, BLACK);
             DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 295, screenHeight / 2 + 100, 30, LIME);
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 295, screenHeight / 2 +250, 30, LIME);
-            // Display the best time from the file
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
                 Color myColor = (Color){255, 100, 100, 255};
@@ -70,6 +72,8 @@ int main() {
 
             if (IsKeyPressed(KEY_SPACE)) {
                 gameStarted = true;
+                StopMusicStream(mainMusic);
+                PlayMusicStream(gameMusic);
             }
             if (IsKeyPressed(KEY_T)) {
                 inTutorial = true;
@@ -88,6 +92,9 @@ int main() {
                 gameOver = false;
                 gameWin = false;
                 gameTimer.Reset();
+                if (!IsMusicStreamPlaying(mainMusic)) {
+                    PlayMusicStream(mainMusic);
+                }
             }
             continue;
         }
@@ -100,6 +107,8 @@ int main() {
             gameOver = false;
             gameWin = false;
             gameTimer.Reset();
+            StopMusicStream(gameMusic); // หยุดเพลงเกม
+            PlayMusicStream(mainMusic); // เล่นเพลงเมนูใหม่
         }
 
         if (IsKeyPressed(KEY_R)) {
@@ -200,7 +209,9 @@ int main() {
 
         EndDrawing();
     }
-
+    UnloadMusicStream(mainMusic);
+    UnloadMusicStream(gameMusic);
+    CloseAudioDevice();
     CloseWindow();
     return 0;
 }
