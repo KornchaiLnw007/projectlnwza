@@ -174,7 +174,7 @@ int main() {
             DrawText("Game Over!", (screenWidth - textWidth) / 2, screenHeight / 2-50, 100, RED);
             DrawText("Press 'R' to play again", (screenWidth - textWidth2) / 2, screenHeight / 2 + 50, 30, RED);
         } else if (gameWin) {
-            DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
+            DrawText("Press 'R' to play again", 10, 10, 30, GREEN);
             // Save time after player wins
             SaveTimeToFile(gameTimer.time);
 
