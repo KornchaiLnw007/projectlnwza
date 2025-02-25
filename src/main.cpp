@@ -167,10 +167,12 @@ int main() {
 
         // Game over or win messages
         if (gameOver) {
-            DrawText("Game Over! Press 'R' to restart", 10, 10, 30, RED);
+            int textWidth = MeasureText("Game Over!", 100);
+            int textWidth2 = MeasureText("Press 'R' to play again", 30);
+            DrawText("Game Over!", (screenWidth - textWidth) / 2, screenHeight / 2-50, 100, RED);
+            DrawText("Press 'R' to play again", (screenWidth - textWidth2) / 2, screenHeight / 2 + 50, 30, RED);
         } else if (gameWin) {
             DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
-            DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 1535, 40 , 30, GREEN);
             // Save time after player wins
             SaveTimeToFile(gameTimer.time);
 
@@ -187,7 +189,11 @@ int main() {
                 grade = "KAK!!!";
             }
             int textWidth = MeasureText(grade.c_str(), 100);
+            int timeWidth = MeasureText(TextFormat("Your Time: %.2f seconds", gameTimer.time), 30);
+            
             DrawText(grade.c_str(), (screenWidth - textWidth) / 2, screenHeight / 2 - 50, 100, GREEN);
+            DrawText(TextFormat("Your Time: %.2f seconds", gameTimer.time), (screenWidth - timeWidth) / 2, screenHeight / 2 +50 , 30, GREEN);
+
         }
 
         EndDrawing();
