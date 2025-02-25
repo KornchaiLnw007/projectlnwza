@@ -18,27 +18,32 @@ public:
 
     // ฟังก์ชันเคลื่อนที่
     void Move() {
+        Vector2 previousPosition = { rect.x, rect.y };
         bool moving = false;
-        
-        if (IsKeyDown(KEY_W)) { rect.y -= 1.5 * speed; moving = true; }
-        if (IsKeyDown(KEY_S)) { rect.y += 1.5 * speed; moving = true; }
-        if (IsKeyDown(KEY_A)) { rect.x -= 1.5 * speed; moving = true; }
-        if (IsKeyDown(KEY_D)) { rect.x += 1.5 * speed; moving = true; }
+    if (IsKeyDown(KEY_W)) { rect.y -= 1.5 * speed; moving = true; }
+    if (IsKeyDown(KEY_S)) { rect.y += 1.5 * speed; moving = true; }
+    if (IsKeyDown(KEY_A)) { rect.x -= 1.5 * speed; moving = true; }
+    if (IsKeyDown(KEY_D)) { rect.x += 1.5 * speed; moving = true; }
 
-        // เล่นเสียงเดินเฉพาะตอนเริ่มเดิน
-        if (moving) {
-            if (!IsSoundPlaying(walkSound)) { // ถ้าเสียงหยุด ให้เล่นใหม่
-                PlaySound(walkSound);
-            }
-            isWalking = true;
-        } 
-        else { // ถ้าหยุดเดิน ให้หยุดเสียง
-            if (isWalking) {
-                StopSound(walkSound);
-                isWalking = false;
-            }
+    // เช็คว่าตำแหน่งเปลี่ยนจริงหรือไม่
+    if (rect.x == previousPosition.x && rect.y == previousPosition.y) {
+        moving = false; // ถ้าตำแหน่งไม่เปลี่ยน แสดงว่าผู้เล่นกดปุ่มตรงข้ามกัน
+    }
+
+    // เล่นเสียงเดินต่อเนื่องเมื่อเดินอยู่
+    if (moving) {
+        if (!IsSoundPlaying(walkSound)) { // ถ้าเสียงหยุด ให้เล่นใหม่
+            PlaySound(walkSound);
+        }
+        isWalking = true;
+    } 
+    else { // ถ้าหยุดเดิน หรือไม่ได้เคลื่อนที่จริง ให้หยุดเสียง
+        if (isWalking) {
+            StopSound(walkSound);
+            isWalking = false;
         }
     }
+}
 
     // เช็คการชนกับกำแพง
     bool CheckCollisionWithWalls(const vector<vector<int>>& maze, int rows, int cols, int cellSize) {
