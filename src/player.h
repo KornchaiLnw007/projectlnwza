@@ -23,6 +23,8 @@ class Player {
                     if (maze[i][j] == 1) { // Wall
                         Rectangle wallRect = {j * cellSize, i * cellSize, cellSize, cellSize};
                         if (CheckCollisionRecs(rect, wallRect)) {
+                            Sound deathSound = LoadSound("src/sound/death.mp3");
+                            PlaySound(deathSound);
                             return true; // Collision detected
                         }
                     }

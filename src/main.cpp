@@ -12,6 +12,7 @@
 using namespace std;
 
 int main() {
+    InitAudioDevice(); 
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
@@ -114,6 +115,7 @@ int main() {
         if (!gameOver && !gameWin) {
             gameTimer.Update();
             player.Move();
+            
 
             if (player.CheckCollisionWithWalls(maze.maze, rows, cols, cellSize)) {
                 gameOver = true;
