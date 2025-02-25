@@ -22,7 +22,7 @@ int main() {
     const int screenWidth = cols * cellSize;
     const int screenHeight = rows * cellSize;
 
-    InitWindow(screenWidth, screenHeight, "Maze Game with Circular Lighting");
+    InitWindow(screenWidth, screenHeight, "Maze Game");
     SetTargetFPS(60);
 
     Player player(cellSize + cellSize / 4.0f, cellSize + cellSize / 4.0f, cellSize / 2.0f, cellSize / 2.0f, GREEN, 2.0f);
