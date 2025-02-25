@@ -16,7 +16,7 @@ int main() {
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 200 * cellSize;
+    const float lightRadius = 3 * cellSize;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
@@ -34,12 +34,11 @@ int main() {
     bool gameStarted = false;
     bool inTutorial = false;  // New flag for tutorial mode 
 
-
-
     Timer gameTimer;
     gameTimer.Reset();
     MainMenu mainMenu(screenWidth, screenHeight);
     Tutorial tutorialScreen;
+    
     while (!WindowShouldClose()) {
         if (!gameStarted && !inTutorial) {
             // Main menu
@@ -112,11 +111,28 @@ int main() {
             gameTimer.Reset();
         }
 
+        if (IsKeyPressed(KEY_Q)) {  // กด Q เพื่อเปิดโล่
+            player.ActivateShield(3.0f);  // โล่เปิดใช้งานเป็นเวลา 3 วินาที
+        }
+        
+        if (IsKeyPressed(KEY_E)) {  // กด E เพื่อเปิด Speed Boost
+            player.ActivateSpeedBoost(3.0f);  // Speed Boost เปิดใช้งานเป็นเวลา 3 วินาที
+        }
+        
+        if (gameOver) {
+            // Deactivate player skills if the game is over
+            player.DeactivateShield();
+            player.DeactivateSpeedBoost();
+            player.ResetCooldowns();
+        }
+        
+        player.Update(GetFrameTime());  // อัพเดทสถานะของสกิล
+
         if (!gameOver && !gameWin) {
             gameTimer.Update();
             player.Move();
-            
 
+            // Check if player has used Speed Boost or Shield, and handle them accordingly
             if (player.CheckCollisionWithWalls(maze.maze, rows, cols, cellSize)) {
                 gameOver = true;
                 player.color = RED;
