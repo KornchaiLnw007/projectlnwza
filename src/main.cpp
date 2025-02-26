@@ -17,6 +17,7 @@ int main() {
     const int rows = 25;
     const int cellSize = 40;
     const float lightRadius = 3 * cellSize;
+    float musicVolume = 0.5f;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
@@ -38,8 +39,8 @@ int main() {
     Music mainMusic = LoadMusicStream("src/sound/mainsong.mp3");
     Music gameMusic = LoadMusicStream("src/sound/gamesong.mp3");
     PlayMusicStream(mainMusic);
-    SetMusicVolume(mainMusic, 1.1f);
-    SetMusicVolume(gameMusic, 1.5f);
+    SetMusicVolume(mainMusic, 0.6f);
+    SetMusicVolume(gameMusic, 0.7f);
 
     Timer gameTimer;
     gameTimer.Reset();
@@ -53,10 +54,23 @@ int main() {
     while (!WindowShouldClose()) {
         UpdateMusicStream(mainMusic); // อัปเดตเพลงเมนู
         UpdateMusicStream(gameMusic); // อัปเดตเพลงเกม
+        if (IsKeyPressed(KEY_UP)) {
+            musicVolume += 0.1f;
+            if (musicVolume > 1.0f) musicVolume = 1.0f;
+        }
+        if (IsKeyPressed(KEY_DOWN)) {
+            musicVolume -= 0.1f;
+            if (musicVolume < 0.0f) musicVolume = 0.0f;
+        }
+        SetMusicVolume(mainMusic, musicVolume);
+        SetMusicVolume(gameMusic, musicVolume);
+
+
         if (!gameStarted && !inTutorial) {
             BeginDrawing();
             ClearBackground(WHITE); 
             DrawTexture(MenuImage, 0, 0, WHITE);
+            DrawText(TextFormat("Music Volume: %.1f", musicVolume), 10, 10, 20, WHITE);
             DrawText("MAZE of", screenWidth / 2 + 330, screenHeight / 2 - 360, 100, BLACK);
             DrawText("LEGENDS", screenWidth / 2 + 400, screenHeight / 2 - 280, 100, BLACK);
             DrawText("MAZE of", screenWidth / 2 + 315, screenHeight / 2 - 370, 100, GOLD);
@@ -204,6 +218,7 @@ int main() {
         DrawRectangleRec(finish, finishColor);
         player.Draw();
         gameTimer.Draw(1575, 10);
+        DrawText(TextFormat("Music Volume: %.1f", musicVolume), 10, 10, 20, WHITE);
         DrawText("Press 'M' to main menu", 10, 965, 30, GREEN);
         DrawText("Press 'E' to use speed boost", 500, 965, 30, GREEN);
         DrawText("Press 'Q' to use sheild", 1000, 965, 30, GREEN);

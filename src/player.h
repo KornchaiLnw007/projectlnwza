@@ -31,20 +31,29 @@ public:
         float moveSpeed = speed;
         if (speedBoostActive) moveSpeed *= 2.0f;
         if (shieldActive) moveSpeed *= 0.5f;
-        
+    
         float newX = rect.x;
         float newY = rect.y;
-
-        Vector2 previousPosition = { newX, newY };
-        bool moving = false;
-        if (IsKeyDown(KEY_W)) { newY -= 1.5 * moveSpeed; moving = true; }
-        if (IsKeyDown(KEY_S)) { newY += 1.5 * moveSpeed; moving = true; }
-        if (IsKeyDown(KEY_A)) { newX -= 1.5 * moveSpeed; moving = true; }
-        if (IsKeyDown(KEY_D)) { newX += 1.5 * moveSpeed; moving = true; }
-
-
-        if (newX == previousPosition.x && newY == previousPosition.y) moving = false;
-        
+    
+        Vector2 moveDirection = { 0.0f, 0.0f };
+    
+        if (IsKeyDown(KEY_W)) moveDirection.y -= 1.5f;
+        if (IsKeyDown(KEY_S)) moveDirection.y += 1.5f;
+        if (IsKeyDown(KEY_A)) moveDirection.x -= 1.5f;
+        if (IsKeyDown(KEY_D)) moveDirection.x += 1.5f;
+    
+        // ตรวจสอบว่ามีการกดปุ่มทิศทางหรือไม่
+        if (moveDirection.x != 0 || moveDirection.y != 0) {
+            float length = sqrt(moveDirection.x * moveDirection.x + moveDirection.y * moveDirection.y);
+            moveDirection.x = (moveDirection.x / length) * moveSpeed;
+            moveDirection.y = (moveDirection.y / length) * moveSpeed;
+        }
+    
+        newX += moveDirection.x;
+        newY += moveDirection.y;
+    
+        bool moving = (moveDirection.x != 0 || moveDirection.y != 0);
+    
         if (moving) {
             if (!IsSoundPlaying(walkSound)) PlaySound(walkSound);         
             isWalking = true;
@@ -54,12 +63,13 @@ public:
                 isWalking = false;
             }
         }
-
+    
+        // ขอบเขตของหน้าจอ
         if (newX < 0) newX = 0;
         if (newY < 0) newY = 0;
         if (newX + rect.width > GetScreenWidth()) newX = GetScreenWidth() - rect.width;
         if (newY + rect.height > GetScreenHeight()) newY = GetScreenHeight() - rect.height;
-            
+    
         rect.x = newX;
         rect.y = newY;
     }
