@@ -12,17 +12,17 @@
 using namespace std;
 
 int main() {
-    InitAudioDevice();
+    InitAudioDevice(); 
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 200 * cellSize;
+    const float lightRadius = 3 * cellSize;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
     const int screenHeight = rows * cellSize;
 
-    InitWindow(screenWidth, screenHeight, "Maze Game with Circular Lighting");
+    InitWindow(screenWidth, screenHeight, "Maze Game");
     SetTargetFPS(60);
 
     Player player(cellSize + cellSize / 4.0f, cellSize + cellSize / 4.0f, cellSize / 2.0f, cellSize / 2.0f, GREEN, 2.0f);
@@ -33,10 +33,13 @@ int main() {
     bool gameWin = false;
     bool gameStarted = false;
     bool inTutorial = false;  // New flag for tutorial mode 
+    
 
     Music mainMusic = LoadMusicStream("src/sound/mainsong.mp3");
     Music gameMusic = LoadMusicStream("src/sound/gamesong.mp3");
     PlayMusicStream(mainMusic);
+    SetMusicVolume(mainMusic, 1.1f);
+    SetMusicVolume(gameMusic, 1.5f);
 
     Timer gameTimer;
     gameTimer.Reset();
@@ -46,6 +49,7 @@ int main() {
     ImageResize(&menuImage, 953*1.5, 648*1.5);
     Texture2D MenuImage = LoadTextureFromImage(menuImage);
     UnloadImage(menuImage); // ไม่ต้องใช้ Image แล้ว
+
     while (!WindowShouldClose()) {
         UpdateMusicStream(mainMusic); // อัปเดตเพลงเมนู
         UpdateMusicStream(gameMusic); // อัปเดตเพลงเกม
@@ -61,6 +65,7 @@ int main() {
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 305, screenHeight / 2 +255, 30, BLACK);
             DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 295, screenHeight / 2 + 100, 30, LIME);
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 295, screenHeight / 2 +250, 30, LIME);
+            // Display the best time from the file
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
                 Color myColor = (Color){255, 100, 100, 255};
@@ -95,20 +100,25 @@ int main() {
                 if (!IsMusicStreamPlaying(mainMusic)) {
                     PlayMusicStream(mainMusic);
                 }
+
             }
             continue;
         }
 
         if (IsKeyPressed(KEY_M)) {
-            maze = Maze(rows, cols);
-            player.rect.x = cellSize + cellSize / 4.0f;
-            player.rect.y = cellSize + cellSize / 4.0f;
             gameStarted = false;
             gameOver = false;
             gameWin = false;
+            maze = Maze(rows, cols);
+            player.rect.x = cellSize + cellSize / 4.0f;
+            player.rect.y = cellSize + cellSize / 4.0f;
             gameTimer.Reset();
             StopMusicStream(gameMusic); // หยุดเพลงเกม
             PlayMusicStream(mainMusic); // เล่นเพลงเมนูใหม่
+            player.color = GREEN;
+            player.DeactivateShield();
+            player.DeactivateSpeedBoost();
+            player.ResetCooldowns();
         }
 
         if (IsKeyPressed(KEY_R)) {
@@ -119,13 +129,33 @@ int main() {
             gameWin = false;
             player.color = GREEN;
             gameTimer.Reset();
+            player.DeactivateShield();
+            player.DeactivateSpeedBoost();
+            player.ResetCooldowns();
         }
+
+        if (IsKeyPressed(KEY_Q)) {  // กด Q เพื่อเปิดโล่
+            player.ActivateShield(3.0f);  // โล่เปิดใช้งานเป็นเวลา 3 วินาที
+        }
+        
+        if (IsKeyPressed(KEY_E)) {  // กด E เพื่อเปิด Speed Boost
+            player.ActivateSpeedBoost(3.0f);  // Speed Boost เปิดใช้งานเป็นเวลา 3 วินาที
+        }
+        
+        if (gameOver || gameWin) {
+            // Deactivate player skills if the game is over
+            player.DeactivateShield();
+            player.DeactivateSpeedBoost();
+            player.ResetCooldowns();
+        }
+        
+        player.Update(GetFrameTime());  // อัพเดทสถานะของสกิล
 
         if (!gameOver && !gameWin) {
             gameTimer.Update();
             player.Move();
-            
 
+            // Check if player has used Speed Boost or Shield, and handle them accordingly
             if (player.CheckCollisionWithWalls(maze.maze, rows, cols, cellSize)) {
                 gameOver = true;
                 player.color = RED;
@@ -175,7 +205,9 @@ int main() {
         player.Draw();
         gameTimer.Draw(1575, 10);
         DrawText("Press 'M' to main menu", 10, 965, 30, GREEN);
-
+        DrawText("Press 'E' to use speed boost", 500, 965, 30, GREEN);
+        DrawText("Press 'Q' to use sheild", 1000, 965, 30, GREEN);
+        
         // Game over or win messages
         if (gameOver) {
             int textWidth = MeasureText("Game Over!", 100);
@@ -183,7 +215,7 @@ int main() {
             DrawText("Game Over!", (screenWidth - textWidth) / 2, screenHeight / 2-50, 100, RED);
             DrawText("Press 'R' to play again", (screenWidth - textWidth2) / 2, screenHeight / 2 + 50, 30, RED);
         } else if (gameWin) {
-            DrawText("You Win! Press 'R' to play again", 10, 10, 30, GREEN);
+            DrawText("Press 'R' to play again", 10, 10, 30, GREEN);
             // Save time after player wins
             SaveTimeToFile(gameTimer.time);
 
@@ -214,4 +246,5 @@ int main() {
     CloseAudioDevice();
     CloseWindow();
     return 0;
+
 }
