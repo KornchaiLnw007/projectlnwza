@@ -2,50 +2,60 @@
 
 class Tutorial {
 private:
-    Texture2D tutorialImage;   // รูป Tutorial 1
-    Texture2D tutorialImage2;  // รูป Tutorial 2
-    Rectangle backButtonRec;   // ตำแหน่งปุ่มย้อนกลับ
-    bool isTutorial2Active;    // สถานะ Tutorial 2
-    bool isBackButtonHovered;  // สถานะ Hover ปุ่มย้อนกลับ
+    Texture2D tutorialImages[5];  // อาร์เรย์เก็บภาพ tutorial 5 หน้า
+    Rectangle backButtonRec;       // ตำแหน่งปุ่มย้อนกลับ
+    int currentTutorialPage;       // หน้าปัจจุบัน
+    bool isBackButtonHovered;      // สถานะ Hover ปุ่มย้อนกลับ
 
 public:
     Tutorial();  // Constructor
     ~Tutorial(); // Destructor
     bool Draw(int screenWidth, int screenHeight); // คืนค่า true ถ้าจะออกจาก tutorial
     bool GoToMainMenu();
-    void SwitchToTutorial2();
+    void NextPage();
+    void PreviousPage();
     void ResetTutorial();
 };
 
-// Constructor โหลดรูป
+// Constructor โหลดรูปภาพ
 Tutorial::Tutorial() {
-    Image img1 = LoadImage("src/Graphic/1.png");
-    tutorialImage = LoadTextureFromImage(img1);
-    UnloadImage(img1);
-
-    Image img2 = LoadImage("src/Graphic/Nargame1dukdik.png");
-    tutorialImage2 = LoadTextureFromImage(img2);
-    UnloadImage(img2);
+    // โหลดภาพ tutorial ทั้งหมด
+    for (int i = 0; i < 5; i++) {
+        Image img = LoadImage(TextFormat("src/Graphic/tutorial%d.png", i + 1)); // โหลดภาพตามหมายเลข
+        tutorialImages[i] = LoadTextureFromImage(img);
+        UnloadImage(img);
+    }
 
     backButtonRec = {500, 900, 200, 50};  // ตำแหน่งปุ่มย้อนกลับ
-    isTutorial2Active = false;
+    currentTutorialPage = 0;  // เริ่มที่หน้า tutorial 1
     isBackButtonHovered = false;
 }
 
 // Destructor ลบรูป
 Tutorial::~Tutorial() {
-    UnloadTexture(tutorialImage);
-    UnloadTexture(tutorialImage2);
+    // ลบภาพทั้งหมด
+    for (int i = 0; i < 5; i++) {
+        UnloadTexture(tutorialImages[i]);
+    }
 }
 
-// เปลี่ยนเป็น tutorial 2
-void Tutorial::SwitchToTutorial2() {
-    isTutorial2Active = true;
+// ไปที่หน้าถัดไป
+void Tutorial::NextPage() {
+    if (currentTutorialPage < 4) {  // ถ้ายังไม่ถึงหน้าสุดท้าย
+        currentTutorialPage++;
+    }
 }
 
-// รีเซ็ตไป tutorial 1
+// ไปที่หน้าก่อนหน้า
+void Tutorial::PreviousPage() {
+    if (currentTutorialPage > 0) {  // ถ้ายังไม่ถึงหน้าต้น
+        currentTutorialPage--;
+    }
+}
+
+// รีเซ็ตกลับไปหน้าแรก
 void Tutorial::ResetTutorial() {
-    isTutorial2Active = false;
+    currentTutorialPage = 0;  // กลับไปที่หน้าแรก
 }
 
 // วาดหน้าจอ Tutorial
@@ -55,25 +65,29 @@ bool Tutorial::Draw(int screenWidth, int screenHeight) {
     
     Vector2 mousePosition = GetMousePosition();
     
-    if (!isTutorial2Active) {
-        // วาด Tutorial 1
-        DrawTexture(tutorialImage, screenWidth / 4.5 - 20, screenHeight / 4.5 - 20, WHITE);
-        DrawText("Press RIGHT ARROW to Next", screenWidth / 2 - 100, 850, 20, DARKGRAY);
-    } else {
-        // วาด Tutorial 2
-        DrawTexture(tutorialImage2, screenWidth / 4.5 - 20, screenHeight / 4.5 - 20, WHITE);
-        DrawText("Press LEFT ARROW to Back", screenWidth / 2 - 100, 850, 20, DARKGRAY);
+    // วาดหน้าปัจจุบัน
+    DrawTexture(tutorialImages[currentTutorialPage], screenWidth / 4.5 + 60, screenHeight / 4.5 - 20, WHITE);
+    
+    // ข้อความที่บอกให้กดลูกศรเพื่อไปหน้าถัดไป
+    if (currentTutorialPage < 4) {
+        DrawText("Press RIGHT ARROW to Next [->]", screenWidth / 2 - 100, 800, 20, DARKGRAY);
     }
     
-    DrawText("Press M to Return to Main Menu", screenWidth / 2 - 150, 900, 20, RED);
+    // ข้อความถ้าอยู่หน้าแรกจะให้กดปุ่มลูกศรซ้าย
+    if (currentTutorialPage > 0) {
+        DrawText("Press  LEFT ARROW to Back [<-]", screenWidth / 2 - 100, 850, 20, DARKGRAY);
+    }
+
+    // ข้อความเพื่อกลับสู่เมนูหลัก
+    DrawText("Press M to Return to Main Menu", screenWidth / 2 - 100, 900, 20, RED);
     
     EndDrawing();
     
-    // ควบคุมด้วยปุ่มลูกศร
+    // ควบคุมการเปลี่ยนหน้า
     if (IsKeyPressed(KEY_RIGHT)) {
-        SwitchToTutorial2();
+        NextPage();
     } else if (IsKeyPressed(KEY_LEFT)) {
-        ResetTutorial();
+        PreviousPage();
     } else if (IsKeyPressed(KEY_M)) {
         return true; // ออกจาก tutorial
     }
