@@ -45,8 +45,8 @@ int main() {
     gameTimer.Reset();
     MainMenu mainMenu(screenWidth, screenHeight);
     Tutorial tutorialScreen;
-    Image menuImage = LoadImage("src/Graphic/Nar.png");
-    ImageResize(&menuImage, 953*1.5, 648*1.5);
+    Image menuImage = LoadImage("src/Graphic/menu.png");
+    //ImageResize(&menuImage, 953*1.5, 648*1.5);
     Texture2D MenuImage = LoadTextureFromImage(menuImage);
     UnloadImage(menuImage); // ไม่ต้องใช้ Image แล้ว
 
@@ -56,11 +56,11 @@ int main() {
         if (!gameStarted && !inTutorial) {
             BeginDrawing();
             ClearBackground(WHITE); 
-            DrawTexture(MenuImage, 240, 10, WHITE);
-            DrawText("MAZE of", screenWidth / 2 + 295, screenHeight / 2 - 360, 60, BLACK);
-            DrawText("LEGENDS", screenWidth / 2 + 365, screenHeight / 2 - 280, 60, BLACK);
-            DrawText("MAZE of", screenWidth / 2 + 280, screenHeight / 2 - 370, 60, GOLD);
-            DrawText("LEGENDS", screenWidth / 2 + 350, screenHeight / 2 - 290, 60, GOLD);
+            DrawTexture(MenuImage, 0, 0, WHITE);
+            DrawText("MAZE of", screenWidth / 2 + 330, screenHeight / 2 - 360, 100, BLACK);
+            DrawText("LEGENDS", screenWidth / 2 + 400, screenHeight / 2 - 280, 100, BLACK);
+            DrawText("MAZE of", screenWidth / 2 + 315, screenHeight / 2 - 370, 100, GOLD);
+            DrawText("LEGENDS", screenWidth / 2 + 385, screenHeight / 2 - 290, 100, GOLD);
             DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 305, screenHeight / 2 + 105, 30, BLACK);
             DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 305, screenHeight / 2 +255, 30, BLACK);
             DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 295, screenHeight / 2 + 100, 30, LIME);
@@ -69,8 +69,8 @@ int main() {
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
                 Color myColor = (Color){255, 100, 100, 255};
-                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 + 295, screenHeight / 2 - 170, 30, BLACK);
-                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 + 285, screenHeight / 2 - 175, 30, myColor);
+                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 + 395, screenHeight / 2 - 170, 30, BLACK);
+                DrawText(TextFormat("Best Time: %.2f seconds", bestTime), screenWidth / 2 + 385, screenHeight / 2 - 175, 30, myColor);
                 
             }
             EndDrawing();

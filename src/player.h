@@ -42,18 +42,11 @@ public:
         if (IsKeyDown(KEY_A)) { newX -= 1.5 * moveSpeed; moving = true; }
         if (IsKeyDown(KEY_D)) { newX += 1.5 * moveSpeed; moving = true; }
 
-        if (newX < 0) newX = 0;
-        if (newY < 0) newY = 0;
-        if (newX + rect.width > GetScreenWidth()) newX = GetScreenWidth() - rect.width;
-        if (newY + rect.height > GetScreenHeight()) newY = GetScreenHeight() - rect.height;
-            
-        rect.x = newX;
-        rect.y = newY;
 
-        if (rect.x == previousPosition.x && rect.y == previousPosition.y) moving = false;
+        if (newX == previousPosition.x && newY == previousPosition.y) moving = false;
         
         if (moving) {
-            if (!IsSoundPlaying(walkSound)) PlaySound(walkSound);
+            if (!IsSoundPlaying(walkSound)) PlaySound(walkSound);         
             isWalking = true;
         } else {
             if (isWalking) {
@@ -61,6 +54,14 @@ public:
                 isWalking = false;
             }
         }
+
+        if (newX < 0) newX = 0;
+        if (newY < 0) newY = 0;
+        if (newX + rect.width > GetScreenWidth()) newX = GetScreenWidth() - rect.width;
+        if (newY + rect.height > GetScreenHeight()) newY = GetScreenHeight() - rect.height;
+            
+        rect.x = newX;
+        rect.y = newY;
     }
 
     bool CheckCollisionWithWalls(const vector<vector<int>>& maze, int rows, int cols, int cellSize) {
