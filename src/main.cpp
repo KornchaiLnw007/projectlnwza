@@ -92,13 +92,17 @@ int main() {
         }
 
         if (IsKeyPressed(KEY_M)) {
-            maze = Maze(rows, cols);
-            player.rect.x = cellSize + cellSize / 4.0f;
-            player.rect.y = cellSize + cellSize / 4.0f;
             gameStarted = false;
             gameOver = false;
             gameWin = false;
+            maze = Maze(rows, cols);
+            player.rect.x = cellSize + cellSize / 4.0f;
+            player.rect.y = cellSize + cellSize / 4.0f;
             gameTimer.Reset();
+            player.color = GREEN;
+            player.DeactivateShield();
+            player.DeactivateSpeedBoost();
+            player.ResetCooldowns();
         }
 
         if (IsKeyPressed(KEY_R)) {
@@ -109,6 +113,9 @@ int main() {
             gameWin = false;
             player.color = GREEN;
             gameTimer.Reset();
+            player.DeactivateShield();
+            player.DeactivateSpeedBoost();
+            player.ResetCooldowns();
         }
 
         if (IsKeyPressed(KEY_Q)) {  // กด Q เพื่อเปิดโล่
@@ -119,7 +126,7 @@ int main() {
             player.ActivateSpeedBoost(3.0f);  // Speed Boost เปิดใช้งานเป็นเวลา 3 วินาที
         }
         
-        if (gameOver) {
+        if (gameOver || gameWin) {
             // Deactivate player skills if the game is over
             player.DeactivateShield();
             player.DeactivateSpeedBoost();
