@@ -70,18 +70,19 @@ class Player {
         }
 
         void ActivateShield(float duration) {
-            if (!shieldCooldownStarted) {  // ตรวจสอบว่าเริ่มคูลดาวน์แล้วหรือยัง
+            if (!shieldCooldownStarted && !speedBoostActive) {  // ตรวจสอบว่าโล่ไม่ได้อยู่ในคูลดาวน์และ Speed Boost ยังไม่ได้เปิดใช้งาน
                 shieldActive = true;
                 shieldTime = duration;  // ตั้งเวลาให้โล่ใช้งาน
             }
         }
-
+        
         void ActivateSpeedBoost(float duration) {
-            if (!speedBoostCooldownStarted) {  // ตรวจสอบว่าเริ่มคูลดาวน์แล้วหรือยัง
+            if (!speedBoostCooldownStarted && !shieldActive) {  // ตรวจสอบว่า Speed Boost ไม่อยู่ในคูลดาวน์และโล่ไม่ได้เปิดใช้งาน
                 speedBoostActive = true;
                 speedBoostTime = duration;  // ตั้งเวลาให้ Speed Boost ใช้งาน
             }
         }
+        
 
         void DeactivateShield() {
             shieldActive = false;
