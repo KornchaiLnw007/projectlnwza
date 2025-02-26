@@ -90,7 +90,7 @@ class Player {
             // เริ่มคูลดาวน์โล่เมื่อโล่ถูกปิด
             if (!shieldCooldownStarted) {
                 shieldCooldownStarted = true;
-                shieldCooldownTime = 5.0f;  // กำหนดเวลาคูลดาวน์ (5 วินาที)
+                shieldCooldownTime = 35;  // กำหนดเวลาคูลดาวน์
             }
         }
 
@@ -100,7 +100,7 @@ class Player {
             // เริ่มคูลดาวน์ Speed Boost เมื่อหมดเวลา
             if (!speedBoostCooldownStarted) {
                 speedBoostCooldownStarted = true;
-                speedBoostCooldownTime = 5.0f;  // กำหนดเวลาคูลดาวน์ (5 วินาที)
+                speedBoostCooldownTime = 20;  // กำหนดเวลาคูลดาวน์
             }
         }
 
