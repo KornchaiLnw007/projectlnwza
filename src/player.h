@@ -32,12 +32,23 @@ public:
         if (speedBoostActive) moveSpeed *= 2.0f;
         if (shieldActive) moveSpeed *= 0.5f;
         
-        Vector2 previousPosition = { rect.x, rect.y };
+        float newX = rect.x;
+        float newY = rect.y;
+
+        Vector2 previousPosition = { newX, newY };
         bool moving = false;
-        if (IsKeyDown(KEY_W)) { rect.y -= 1.5 * moveSpeed; moving = true; }
-        if (IsKeyDown(KEY_S)) { rect.y += 1.5 * moveSpeed; moving = true; }
-        if (IsKeyDown(KEY_A)) { rect.x -= 1.5 * moveSpeed; moving = true; }
-        if (IsKeyDown(KEY_D)) { rect.x += 1.5 * moveSpeed; moving = true; }
+        if (IsKeyDown(KEY_W)) { newY -= 1.5 * moveSpeed; moving = true; }
+        if (IsKeyDown(KEY_S)) { newY += 1.5 * moveSpeed; moving = true; }
+        if (IsKeyDown(KEY_A)) { newX -= 1.5 * moveSpeed; moving = true; }
+        if (IsKeyDown(KEY_D)) { newX += 1.5 * moveSpeed; moving = true; }
+
+        if (newX < 0) newX = 0;
+        if (newY < 0) newY = 0;
+        if (newX + rect.width > GetScreenWidth()) newX = GetScreenWidth() - rect.width;
+        if (newY + rect.height > GetScreenHeight()) newY = GetScreenHeight() - rect.height;
+            
+        rect.x = newX;
+        rect.y = newY;
 
         if (rect.x == previousPosition.x && rect.y == previousPosition.y) moving = false;
         
