@@ -16,8 +16,9 @@ int main() {
     const int cols = 47;
     const int rows = 25;
     const int cellSize = 40;
-    const float lightRadius = 3 * cellSize;
-    float musicVolume = 0.5f;
+    const float lightRadius = 100 * cellSize;
+    float musicVolume = 0.6f;
+    bool winSoundPlayed = false;
 
     Maze maze(rows, cols);
     const int screenWidth = cols * cellSize;
@@ -70,15 +71,15 @@ int main() {
             BeginDrawing();
             ClearBackground(WHITE); 
             DrawTexture(MenuImage, 0, 0, WHITE);
-            DrawText(TextFormat("Music Volume: %.1f", musicVolume), 10, 10, 20, WHITE);
+            DrawText(TextFormat("Music Volume: %.1f", musicVolume), 1700, 975, 20, WHITE);
             DrawText("MAZE of", screenWidth / 2 + 330, screenHeight / 2 - 360, 100, BLACK);
             DrawText("LEGENDS", screenWidth / 2 + 400, screenHeight / 2 - 280, 100, BLACK);
             DrawText("MAZE of", screenWidth / 2 + 315, screenHeight / 2 - 370, 100, GOLD);
             DrawText("LEGENDS", screenWidth / 2 + 385, screenHeight / 2 - 290, 100, GOLD);
-            DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 305, screenHeight / 2 + 105, 30, BLACK);
-            DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 305, screenHeight / 2 +255, 30, BLACK);
-            DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 295, screenHeight / 2 + 100, 30, LIME);
-            DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 295, screenHeight / 2 +250, 30, LIME);
+            DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 325, screenHeight / 2 + 105, 30, BLACK);
+            DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 325, screenHeight / 2 +255, 30, BLACK);
+            DrawText("> |Press 'SPACE' to start|", screenWidth / 2 + 315, screenHeight / 2 + 100, 30, LIME);
+            DrawText("> |Press 'T' for tutorial|", screenWidth / 2 + 315, screenHeight / 2 +250, 30, LIME);
             // Display the best time from the file
             float bestTime = LoadBestTime();
             if (bestTime != -1) {
@@ -123,6 +124,7 @@ int main() {
             gameStarted = false;
             gameOver = false;
             gameWin = false;
+            winSoundPlayed = false;
             maze = Maze(rows, cols);
             player.rect.x = cellSize + cellSize / 4.0f;
             player.rect.y = cellSize + cellSize / 4.0f;
@@ -142,6 +144,7 @@ int main() {
             gameOver = false;
             gameWin = false;
             player.color = GREEN;
+            winSoundPlayed = false;
             gameTimer.Reset();
             player.DeactivateShield();
             player.DeactivateSpeedBoost();
@@ -218,10 +221,10 @@ int main() {
         DrawRectangleRec(finish, finishColor);
         player.Draw();
         gameTimer.Draw(1575, 10);
-        DrawText(TextFormat("Music Volume: %.1f", musicVolume), 10, 10, 20, WHITE);
+        DrawText(TextFormat("Music Volume: %.1f", musicVolume), 1700, 975, 20, WHITE);
         DrawText("Press 'M' to main menu", 10, 965, 30, GREEN);
-        DrawText("Press 'E' to use speed boost", 500, 965, 30, GREEN);
-        DrawText("Press 'Q' to use sheild", 1000, 965, 30, GREEN);
+        DrawText("Press 'Q' to use sheild", 500, 965, 30, GREEN);
+        DrawText("Press 'E' to use speed boost", 1000, 965, 30, GREEN);
         
         // Game over or win messages
         if (gameOver) {
@@ -231,8 +234,12 @@ int main() {
             DrawText("Press 'R' to play again", (screenWidth - textWidth2) / 2, screenHeight / 2 + 50, 30, RED);
         } else if (gameWin) {
             DrawText("Press 'R' to play again", 10, 10, 30, GREEN);
-            // Save time after player wins
-            SaveTimeToFile(gameTimer.time);
+            if (!winSoundPlayed) { // เล่นเสียงแค่ครั้งเดียว
+                Sound winsound = LoadSound("src/sound/win.mp3");
+                PlaySound(winsound);
+                winSoundPlayed = true;
+                SaveTimeToFile(gameTimer.time);
+            }
 
             string grade;
             if (gameTimer.time < 30) {
@@ -261,5 +268,4 @@ int main() {
     CloseAudioDevice();
     CloseWindow();
     return 0;
-
 }

@@ -9,7 +9,6 @@ public:
     float speed;
     Sound walkSound;  // เพิ่มเสียงเดิน
     bool isWalking;
-
     bool shieldActive;
     bool speedBoostActive;
     float shieldTime;
