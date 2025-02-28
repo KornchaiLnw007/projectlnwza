@@ -100,14 +100,16 @@ public:
     }
 
     void ActivateShield(float duration) {
-        if (!shieldCooldownStarted && !speedBoostActive) {
+        // ตรวจสอบว่าคูลดาวน์หมดหรือยัง ก่อนใช้สกิล
+        if (!shieldActive && !shieldCooldownStarted && shieldCooldownTime <= 0.0f) {
             shieldActive = true;
             shieldTime = duration;
         }
     }
     
     void ActivateSpeedBoost(float duration) {
-        if (!speedBoostCooldownStarted && !shieldActive) {
+        // ตรวจสอบว่าคูลดาวน์หมดหรือยัง ก่อนใช้สกิล
+        if (!speedBoostActive && !speedBoostCooldownStarted && speedBoostCooldownTime <= 0.0f) {
             speedBoostActive = true;
             speedBoostTime = duration;
         }
@@ -132,25 +134,28 @@ public:
     }
 
     void Update(float deltaTime) {
+        if (IsKeyPressed(KEY_F)) ActivateShield(5.0f);      // ใช้โล่ได้แค่กดทีเดียว
+        if (IsKeyPressed(KEY_G)) ActivateSpeedBoost(3.0f);  // ใช้บูสต์ความเร็วได้แค่กดทีเดียว
+    
         if (shieldActive) {
             shieldTime -= deltaTime;
             if (shieldTime <= 0.0f) {
                 DeactivateShield();
             }
         }
-
+    
         if (speedBoostActive) {
             speedBoostTime -= deltaTime;
             if (speedBoostTime <= 0.0f) {
                 DeactivateSpeedBoost();
             }
         }
-
+    
         if (shieldCooldownStarted && shieldCooldownTime > 0.0f) {
             shieldCooldownTime -= deltaTime;
             if (shieldCooldownTime <= 0.0f) shieldCooldownStarted = false;
         }
-
+    
         if (speedBoostCooldownStarted && speedBoostCooldownTime > 0.0f) {
             speedBoostCooldownTime -= deltaTime;
             if (speedBoostCooldownTime <= 0.0f) speedBoostCooldownStarted = false;
